@@ -1,0 +1,1 @@
+bloqueos: 15, remates: 30
