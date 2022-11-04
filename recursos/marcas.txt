@@ -1,1 +1,5 @@
-bloqueos: 15, remates: 30
+bloqueos-15
+remates-30
+Goles-10
+Pases-85
+Asistencias-25

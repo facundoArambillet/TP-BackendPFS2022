@@ -143,7 +143,7 @@ export class TorneosService {
     private loadTorneos() {
         try {
             let torneo: Torneo;
-            let texto: string = FS.readFileSync('.\\resources\\marcas.txt', 'utf8');
+            let texto: string = FS.readFileSync('.\\recursos\\torneos.txt', 'utf8');
             if (texto) {
                 this.torneos = [];
                 let datos = texto.split('\n').map(p => p.replace("\r", "")).map(p => p.split(","));
@@ -169,10 +169,10 @@ export class TorneosService {
 
     private saveTorneos() {
         try {
-            FS.writeFileSync('.\\resources\\torneos.txt', '');
+            FS.writeFileSync('.\\recursos\\torneos.txt', '');
             for (let i = 0; i < this.torneos.length; i++) {
                 let registro = this.torneos[i].toString();
-                FS.appendFileSync('.\\resources\\torneos.txt', `${i == 0 ? '' : '\n'}${registro}`);
+                FS.appendFileSync('.\\recursos\\torneos.txt', `${i == 0 ? '' : '\n'}${registro}`);
             }
         } catch (error) {
         }

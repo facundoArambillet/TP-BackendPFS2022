@@ -34,15 +34,13 @@ export default class Delegacion {
         try {
             if (nuevoIntegrante) {
                 for (let i = 0; i < this.integrantes.length; i++) {
-                    if (nuevoIntegrante.getApellidoNombres() != this.integrantes[i].getApellidoNombres()) {
-                        this.integrantes.push(nuevoIntegrante);
-                        return "Integrante añadido con exito";
-                    }
-                    else {
+                    if (nuevoIntegrante.getApellidoNombres() == this.integrantes[i].getApellidoNombres()) {
                         throw new Error("El integrante ya existe");
 
                     }
                 }
+                this.integrantes.push(nuevoIntegrante);
+                return "Integrante añadido con exito";
             }
             else {
                 throw new Error("Datos de integrante invalidos");

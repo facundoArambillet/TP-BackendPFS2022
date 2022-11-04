@@ -28,10 +28,6 @@ export class IntegrantesService {
                     if (nombre == this.integrantes[i].getApellidoNombres()) {
                         return this.integrantes[i];
                     }
-                    else {
-                        throw new Error("Integrante no encontrado");
-
-                    }
                 }
 
             }
@@ -48,44 +44,45 @@ export class IntegrantesService {
         let integranteCreado: any;
         try {
             if (nuevoIntegrante) {
-                for (let i = 0; i <= this.integrantes.length; i++) {
-                    console.log(this.integrantes[i].getApellidoNombres())
-                    if (nuevoIntegrante.apellidoNombres != this.integrantes[i].getApellidoNombres()) {
-                        if (nuevoIntegrante.acceso) {
-                            integranteCreado = new Dirigente(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
-                                nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.acceso, nuevoIntegrante.jefe)
-                            this.integrantes.push(integranteCreado);
-
-
-                        }
-                        else if (nuevoIntegrante.marca) {
-                            integranteCreado = new Deportista(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
-                                nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan)
-                            for (let i = 0; i < nuevoIntegrante.marca.length; i++) {
-                                let marca: Marca = this.marcaService.getMarca(nuevoIntegrante.marca);
-                                integranteCreado.addMarca(marca)
-                            }
-                            this.integrantes.push(integranteCreado);
-
-
-                        }
-                        else {
-                            integranteCreado = new CuerpoTecnico(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
-                                nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan)
-                            this.integrantes.push(integranteCreado);
-
-
-                        }
-                        this.saveIntengrantes();
-                        this.loadIntegrantes();
-
-                    }
-                    else {
+                
+                for (let i = 0; i < this.integrantes.length; i++) {
+                    if (nuevoIntegrante.apellidoNombres == this.integrantes[i].getApellidoNombres()) {
                         throw new Error("El intengrante ya se encuentra en la lista");
-
                     }
+                    
                 }
+                
+                if (nuevoIntegrante.acceso) {
+                    integranteCreado = new Dirigente(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
+                        nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.acceso, nuevoIntegrante.jefe)
+                    this.integrantes.push(integranteCreado);
 
+
+                }
+                else if (nuevoIntegrante.marcas) {
+                    
+                    let marcas : Marca[] =[];
+                    for (let i = 0; i < nuevoIntegrante.marcas.length; i++) {
+                      let  marca : Marca= new Marca(nuevoIntegrante.marcas[i].nombre, Number(nuevoIntegrante.marcas[i].valor));
+                      marcas.push(marca)
+                     
+                    }
+                    
+                    integranteCreado = new Deportista(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
+                        nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan, marcas)
+                    this.integrantes.push(integranteCreado);
+
+                }
+                else {
+                    integranteCreado = new CuerpoTecnico(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
+                        nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan)
+                    this.integrantes.push(integranteCreado);
+
+
+                }
+                this.saveIntegrantes();
+                this.loadIntegrantes();
+                return "Integrante creado con exito";
             }
             else {
                 throw new Error("Datos de nuevo integrante invalidos");
@@ -109,7 +106,7 @@ export class IntegrantesService {
                         }
                         else if (nuevoIntegrante.marca != null || undefined) {
                             integranteCreado = new Deportista(nuevoIntegrante.credencial, nuevoIntegrante.apellidoNombres, nuevoIntegrante.fechaNacimiento,
-                                nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan)
+                                nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan, nuevoIntegrante.marcas)
                             this.integrantes[i] = integranteCreado;
                         }
                         else {
@@ -117,7 +114,7 @@ export class IntegrantesService {
                                 nuevoIntegrante.paisNacimiento, nuevoIntegrante.deporte, nuevoIntegrante.rol, nuevoIntegrante.capitan)
                             this.integrantes[i] = integranteCreado;
                         }
-                        this.saveIntengrantes();
+                        this.saveIntegrantes();
                         this.loadIntegrantes();
                     }
                     else {
@@ -138,15 +135,11 @@ export class IntegrantesService {
         try {
             if (nombre) {
                 for (let i = 0; i < this.integrantes.length; i++) {
-                    if (nombre == this.integrantes[i].getApellidoNombres()) {
+                    if (nombre.toUpperCase() == this.integrantes[i].getApellidoNombres().toUpperCase()) {
                         this.integrantes.splice(i, 1);
-                        this.saveIntengrantes();
-                       this.loadIntegrantes()
+                        this.saveIntegrantes();
+                        this.loadIntegrantes();
                         return "Integrante eliminado con exito";
-                    }
-                    else {
-                        throw new Error("Integrante no encontrado");
-
                     }
                 }
             }
@@ -162,56 +155,60 @@ export class IntegrantesService {
     private loadIntegrantes() {
         try {
             let integrante: any;
-            let texto: string = FS.readFileSync('.\\resources\\integrantes.txt', 'utf8');
+            let capitan : any;
+            let texto: string = FS.readFileSync('.\\recursos\\integrantes.txt', 'utf8');
             if (texto) {
-                
-                let datos = texto.split('\n').map(p => p.replace('/r',"")).map(p => p.split(","));
+                this.integrantes = [];
+                let datos = texto.split('\n').map(p => p.replace('\r', "")).map(p => p.split(","));
                 for (let i = 0; i < datos.length; i++) {
-                    
                     if (datos[i].length == 8) {
-                        if (datos[i][7].trim() == '0' || datos[i][7].trim() == '1') {
+                        if (datos[i][7] == '0' || datos[i][7] == '1') {
+                            let jefe = (Number(datos[i][7]) == 1)
                             integrante = new Dirigente(datos[i][0], datos[i][1], Number(datos[i][2]), datos[i][3],
-                                datos[i][4], datos[i][5], Number(datos[i][6]), Boolean(Number(datos[i][7])));
-
-
+                                datos[i][4], datos[i][5], Number(datos[i][6]), jefe);
                         }
                         else {
-                            integrante = new Deportista(datos[i][0], datos[i][1], Number(datos[i][2]), datos[i][3],
-                                datos[i][4], datos[i][5], Boolean(Number(datos[i][6])));
-
-                            let marcas = datos[i][7].split('-');
-                            for (let j = 0; j < marcas.length; j++) {
-                                let marca = this.marcaService.getMarca(marcas[j]);
-                                integrante.addMarca(marca);
+                            capitan = ((Number(datos[i][6]) == 1))
+                            
+                            let marcasDatos = datos[i][7].split('-');
+                            let marcas : Marca[] = [];
+                            for (let j = 0; j < marcasDatos.length; j++) {
+                                let marca: Marca = this.marcaService.getMarca(marcasDatos[j]);
+                                marcas.push(marca);
+                               
                             }
+                            
+                            integrante = new Deportista(datos[i][0], datos[i][1], Number(datos[i][2]), datos[i][3],
+                                datos[i][4], datos[i][5], capitan, marcas);
 
                         }
                     }
                     else {
+                        capitan = ((Number(datos[i][6]) == 1))
                         integrante = new CuerpoTecnico(datos[i][0], datos[i][1], Number(datos[i][2]), datos[i][3],
-                            datos[i][4], datos[i][5], Boolean(Number(datos[i][6])));
+                            datos[i][4], datos[i][5], capitan);
 
                     }
                     this.integrantes.push(integrante);
                 }
-                
+
             }
+            
             else {
                 throw new Error("Texto invalido");
 
             }
+
         } catch (error) {
             return error.message;
         }
     }
-    private saveIntengrantes() {
-        try {
-            FS.writeFileSync('.\\resources\\integrantes.txt', '');
-            for (let i = 0; i < this.integrantes.length; i++) {
-                let registro = this.integrantes[i].toString();
-                FS.appendFileSync('.\\resources\\integrantes.txt', `${i == 0 ? '' : '\n'}${registro}`);
-            }
-        } catch (error) {
+    private saveIntegrantes() {
+        FS.writeFileSync('.\\recursos\\integrantes.txt', '');
+        for (let i = 0; i < this.integrantes.length; i++) {
+            let registro = this.integrantes[i].toString();
+            FS.appendFileSync('.\\recursos\\integrantes.txt', `${i == 0 ? '' : '\n'}${registro}`);
         }
+
     }
 }

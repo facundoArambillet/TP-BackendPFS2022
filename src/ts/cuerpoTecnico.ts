@@ -19,7 +19,7 @@ export default class CuerpoTecnico extends Integrante {
     }
     public toString(): string {
         let datos : string ='';
-        datos += `${super.getCredencial()},${super.getApellidoNombres()},${super.getApellidoNombres()},${super.getFechaNacimiento()},${super.getPaisNacimiento()},${super.getDeporte()},${super.getRol()},${this.capitan}`;
+        datos += `${super.getCredencial()},${super.getApellidoNombres()},${super.getFechaNacimiento()},${super.getPaisNacimiento()},${super.getDeporte()},${super.getRol()},${this.capitan?1:0}`;
         return datos;
     }
 }

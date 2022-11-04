@@ -19,13 +19,11 @@ export class MarcasService {
         try {
             if (nombre) {
                 for (let i = 0; i < this.marcas.length; i++) {
+                   //console.log(this.marcas[i].getNombre())
                     if (nombre == this.marcas[i].getNombre()) {
-                        return this.marcas[i]
+                        return this.marcas[i];
                     }
-                    else {
-                        throw new Error("Marca no encontrada");
 
-                    }
                 }
             }
             else {
@@ -33,6 +31,7 @@ export class MarcasService {
 
             }
         } catch (error) {
+            console.log("Error getMarca")
             return error.message;
         }
 
@@ -42,6 +41,7 @@ export class MarcasService {
         try {
             if (marca) {
                 if (marca.nombre && marca.valor) {
+                    
                     for (let i = 0; i < this.marcas.length; i++) {
                         if (marca.nombre == this.marcas[i].getNombre()) {
                             throw new Error("La marca ya existe");
@@ -132,13 +132,18 @@ export class MarcasService {
     private loadMarcas() {
         try {
             let marca: Marca;
-            let texto: string = FS.readFileSync('.\\resources\\marcas.txt', 'utf8');
+            let texto: string = FS.readFileSync('.\\recursos\\marcas.txt', 'utf8');
             if (texto) {
                 this.marcas = [];
-                let datos = texto.split('\n').map(p => p.replace('/r', '')).map(p => p.split(","));
+                let datos = texto.split('\n').map(p => p.replace('\r', '')).map(p => p.split(","));
                 for (let i = 0; i < datos.length; i++) {
-                    marca = new Marca(datos[i][0], datos[i][1]);
-                    this.marcas.push(marca);
+                    let registro = datos[i];
+                    for(let j = 0; j < registro.length; j++) {
+                       let nuevoRegistro = registro[j].split("-");
+                        marca = new Marca(nuevoRegistro[0], Number(nuevoRegistro[1]));
+                        this.marcas.push(marca);
+                    }
+
                 }
             }
             else {
@@ -151,12 +156,14 @@ export class MarcasService {
     }
     private saveMarcas() {
         try {
-            FS.writeFileSync('.\\resources\\marcas.txt', '');
-            for (let i = 0; i < this.marcas.length; i++) {            
+            FS.writeFileSync('.\\recursos\\marcas.txt', '');
+            console.log(this.marcas)
+            for (let i = 0; i < this.marcas.length; i++) {
                 let registro = this.marcas[i].toString();
-                FS.appendFileSync('.\\resources\\marcas.txt', `${i==0?'':'\n'}${registro}`);
+                //console.log(registro)
+                FS.appendFileSync('.\\recursos\\marcas.txt', `${i == 0 ? '' : '\n'}${registro}`);
             }
-        } catch (error) {           
+        } catch (error) {
         }
     }
 }

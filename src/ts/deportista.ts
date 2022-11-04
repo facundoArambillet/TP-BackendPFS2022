@@ -6,10 +6,11 @@ export default class Deportista extends Integrante {
     private marcas: Marca[];
 
     public constructor(credencial: string, apellidoNombres: string, fechaNacimiento: number,
-        paisNacimiento: string, deporte: string, rol: string, capitan: boolean) {
+        paisNacimiento: string, deporte: string, rol: string, capitan: boolean, marcas: Marca[]) {
         super(credencial, apellidoNombres, fechaNacimiento, paisNacimiento, deporte, rol)
 
         this.capitan = capitan;
+        this.marcas = marcas;
     }
 
     public isCapitan(): boolean {
@@ -26,19 +27,24 @@ export default class Deportista extends Integrante {
         this.marcas = nuevasMarcas;
     }
 
-    public addMarca(nuevaMarca: Marca) {
+    public addMarca(nuevasMarcas: Marca[]) {
         try {
-            if(nuevaMarca) {
+            if(nuevasMarcas) {
                 for(let i = 0; i < this.marcas.length; i++) {
-                    if(nuevaMarca.getNombre() == this.marcas[i].getNombre()) {
+                    console.log(this.marcas[i])
+                    console.log(nuevasMarcas[i])
+                    if(nuevasMarcas[i].getNombre() == this.marcas[i].getNombre() && nuevasMarcas[i].getValor() == this.marcas[i].getValor()) {
                         throw new Error("La marca ya existe");
                         
                     }
                     else {
-                        this.marcas.push(nuevaMarca);
-                        return "Marca añadida con exito";
+                        for(let j = 0; j < nuevasMarcas.length; j++) {
+                            this.marcas.push(nuevasMarcas[j]);
+                        }
+                        
                     }
                 }
+                return "Marca añadida con exito";
                 
             }
             else {
@@ -73,11 +79,16 @@ export default class Deportista extends Integrante {
 
     public toString(): string {
         let datos : string ='';
-        let marcas : string = ''
+        let textoMarcas : string = ''
+        console.log(this.marcas[0])
+       //console.log(this.marcas[0].getValor())
+       // console.log(this.marcas[0].getNombre())
+        
         for(let i = 0; i < this.marcas.length; i ++) {
-            marcas += `${i==0? "" : "-"}${this.marcas[i].getNombre()}`
+            textoMarcas += `${i==0? "" : "-"}${this.marcas[i].getNombre()}`
         }
-        datos += `${super.getCredencial()},${super.getApellidoNombres()},${super.getApellidoNombres()},${super.getFechaNacimiento()},${super.getPaisNacimiento()},${super.getDeporte()},${super.getRol()},${this.capitan}`;
-        return `${datos},${marcas}`;
+        
+        datos += `${super.getCredencial()},${super.getApellidoNombres()},${super.getFechaNacimiento()},${super.getPaisNacimiento()},${super.getDeporte()},${super.getRol()},${this.capitan?1:0},${textoMarcas}`;
+        return `${datos}`;
     }
 }

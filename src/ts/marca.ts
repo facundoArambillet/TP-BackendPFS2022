@@ -1,9 +1,9 @@
 
 export default class Marca {
     private nombre: string;
-    private valor: string;
+    private valor: number;
 
-    public constructor(nombre: string, valor: string) {
+    public constructor(nombre: string, valor: number) {
         this.nombre = nombre;
         this.valor = valor;
     }
@@ -11,18 +11,18 @@ export default class Marca {
     public getNombre(): string {
         return this.nombre;
     }
-    public getValor(): string {
+    public getValor(): number {
         return this.valor;
     }
 
     public setNombre(nuevoNombre: string) : void {
         this.nombre = nuevoNombre;
     }
-    public setValor(nuevoValor: string) : void {
+    public setValor(nuevoValor: number) : void {
         this.valor = nuevoValor;
     }
 
-    public toString() {
-        
+    public toString(): string {
+        return `${this.nombre}-${this.valor}`
     }
 }

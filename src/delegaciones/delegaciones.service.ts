@@ -23,7 +23,7 @@ export class DelegacionesService {
             if (pais) {
                 for (let i = 0; i < this.delegaciones.length; i++) {
                     if (pais == this.delegaciones[i].getPais()) {
-                        return this.delegaciones[i]
+                        return this.delegaciones[i];
                     }
                     else {
                         throw new Error("Delegacion no encontrada");
@@ -56,7 +56,7 @@ export class DelegacionesService {
                                     let integrante: Integrante = this.integrantesService.getIntegrante(delegacion.integrantes[i]);
                                     nuevaDelegacion.addIntegrante(integrante);
                                     this.saveDelegaciones();
-                                    this.loadDelegaciones();
+                                    // this.loadDelegaciones();
                                     return "Delegacion creada con exito"
                                 }
                             }
@@ -89,7 +89,7 @@ export class DelegacionesService {
                             let nuevaDelegacion = new Delegacion(delegacion.pais, delegacion.deporte)
                             this.delegaciones[i] = nuevaDelegacion;
                             this.saveDelegaciones();
-                            this.loadDelegaciones();
+                            //  this.loadDelegaciones();
                             return "Delegacion Actualizada con exito";
                         }
                         else {
@@ -119,7 +119,7 @@ export class DelegacionesService {
                     if (delegacion.pais == this.delegaciones[i].getPais()) {
                         this.delegaciones.splice(i, 1);
                         this.saveDelegaciones();
-                        this.loadDelegaciones();
+                        //this.loadDelegaciones();
                         return "Delegacion Eliminada con exito";
                     }
                     else {
@@ -140,17 +140,22 @@ export class DelegacionesService {
     private loadDelegaciones() {
         try {
             let delegacion: Delegacion;
-            let texto: string = FS.readFileSync('.\\resources\\delegaciones.txt', 'utf8');
+            let texto: string = FS.readFileSync('.\\recursos\\delegaciones.txt', 'utf8'); //Cuando cambio el nombre de la carpeta se me traba el nest
+
             if (texto) {
                 this.delegaciones = [];
                 let datos = texto.split('\n').map(p => p.replace('/r', '')).map(p => p.split(","));
+
                 for (let i = 0; i < datos.length; i++) {
                     delegacion = new Delegacion(datos[i][0], datos[i][1]);
                     let integrantes = datos[i][2].split("-");
-                    for (let j = 0; j < integrantes.length; i++) {
-                        let integrante = this.integrantesService.getIntegrante(integrantes[j]);
+                    integrantes[i].trim();
+
+                    for (let j = 0; j < integrantes.length; j++) {
+                        let integrante = this.integrantesService.getIntegrante(integrantes[j])
                         delegacion.addIntegrante(integrante);
                     }
+
                     this.delegaciones.push(delegacion);
                 }
             }
@@ -164,12 +169,12 @@ export class DelegacionesService {
     }
     private saveDelegaciones() {
         try {
-            FS.writeFileSync('.\\resources\\delegaciones.txt', '');
-            for (let i = 0; i < this.delegaciones.length; i++) {            
+            FS.writeFileSync('.\\recursos\\delegaciones.txt', '');
+            for (let i = 0; i < this.delegaciones.length; i++) {
                 let registro = this.delegaciones[i].toString();
-                FS.appendFileSync('.\\resources\\delegaciones.txt', `${i==0?'':'\n'}${registro}`);
+                FS.appendFileSync('.\\recursos\\delegaciones.txt', `${i == 0 ? '' : '\n'}${registro}`);
             }
-        } catch (error) {           
+        } catch (error) {
         }
     }
 }

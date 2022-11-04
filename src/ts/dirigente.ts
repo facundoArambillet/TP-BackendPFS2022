@@ -28,7 +28,7 @@ export default class Dirigente extends Integrante {
 
     public toString(): string {
         let datos : string ='';
-        datos += `${super.getCredencial()},${super.getApellidoNombres()},${super.getApellidoNombres()},${super.getFechaNacimiento()},${super.getPaisNacimiento()},${super.getDeporte()},${super.getRol()},${this.acceso},${this.jefe}`;
+        datos += `${super.getCredencial()},${super.getApellidoNombres()},${super.getFechaNacimiento()},${super.getPaisNacimiento()},${super.getDeporte()},${super.getRol()},${this.acceso},${this.jefe?1:0}`;
         return datos;
     }
 }

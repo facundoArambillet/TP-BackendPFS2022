@@ -1,5 +1,5 @@
 
-export default abstract class Integrante {
+export default  class Integrante {
     protected credencial: string;
     protected apellidoNombres: string;
     protected fechaNacimiento: number;
@@ -57,5 +57,4 @@ export default abstract class Integrante {
         this.rol = nuevoRol;
     }
 
-    abstract toString(): string
 }
